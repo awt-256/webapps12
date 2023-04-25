@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extension Manager</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/main.css">
+</head>
+
+<body>
+    <nav>
+        <div class="nav-wrapper row purple">
+            <div class="col s4">
+                <% if (isLoggedIn) { %>
+                    <a href="/logout" class="btn red">Log out</a>
+                <% } else { %>
+                    <a href="/login" class="btn blue">Log in</a>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <!-- Title screen -->
+        <div class="center-align">
+            <br>
+            <h2><%=user.name%>'s Inventory</h2>
+
+            <table id="inventory-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Item Name</th>
+                        <th>Description</th>
+                        <th>Quantity</th>
+                        <th>Last Modified</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <% for (const item of items) { %>
+                        <tr>
+                            <td><a href="/app/item/<%= item.id %>"" class="btn-floating btn-small purple waves-effect waves-light">
+                                <i class="material-icons">info</i>
+                            </a></td>
+                            <td><%= item.name %></td>
+                            <td><%= item.description %></td>
+                            <td><%= item.quantity %></td>
+                            <td style="color: gray; font-size: 0.8em"><%= new Date(item.lastModified).toLocaleDateString("en-US", { hour: "numeric", minute: "numeric", second: "numeric" }) %></td>
+                            <td> <a class="delete-item-btn btn-floating btn-small red waves-effect waves-light"
+                                href="/app/item/<%= item.id %>/delete">
+                                <i class="material-icons">delete</i>
+                            </a></td>
+                        </td>
+                    <% } %>
+                </tbody>
+            </table>
+
+            <br>
+            <br>
+            <!-- data-target links to materialize -->
+            <a href="#new-note" class="modal-trigger center-align btn-small blue waves-effect waves-light">
+                <i class="material-icons right">create</i>
+                New Item
+            </a>
+
+            <div id="new-note" class="modal">
+                <form method="post" action="/app/item/new">
+                    <div class="modal-content">
+                        <h4>New Item</h4>
+                        <div class="row">
+                            <div class="input-field col s6">
+                                <input maxlength="32" name="name" class="validate" required style="font-size: 1.5em"
+                                    id="name" type="text">
+                                <label for="name">Item Name</label>
+                            </div>
+                            <div class="input-field col s2">
+                                <input class="validate" required value=1 name="quantity" id="quantity" type="number">
+                                <label for="quantity">Quantity</label>
+                            </div>
+                            <!-- <div class="col s1"></div> -->
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <textarea maxlength="400" id="description" class="materialize-textarea" name="description"
+                                    type="text"></textarea>
+                                 <label for="description">Description</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input name="categoryName" x-dropdown="categorize-dropdown" type="text" style="display: none">
+                                <a class="dropdown-trigger btn blue" href="#" data-target="categorize-dropdown">Categorize</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer center-align">
+                        <a href="#!" class="modal-close left btn-flat waves-effect waves-dark">
+                            <i class="material-icons left">cancel</i>
+                            Cancel
+                        </a>
+                        <button type="submit" class="right teal white-text btn-flat waves-effect waves-light">
+                            <i class="material-icons right">add_circle</i>
+                            Create
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <ul id='categorize-dropdown' class='dropdown-content'>
+        <% for (let i = 0; i < categories.length; ++i) { %>
+            <li value="<%= i %>"><a href="#!" value="<%= i %>"><%= categories[i].name %></a></li>
+        <% } %>
+        <li class="divider" value="-1"></li>
+        <li value="-2"><a href="#new-category" class="modal-trigger" value="-2">
+            <i class="material-icons" value="-2">add_circle</i>new
+        </a></li>
+    </ul>
+
+    <div id="new-category" class="modal">
+        <div>
+            <div class="modal-content">
+                <h4>New Category</h4>
+                <div class="row">
+                    <div class="input-field col s6">
+                        <input maxlength="32" name="name" class="validate" required style="font-size: 1.5em"
+                            id="category-name" type="text">
+                        <label for="name">Category Name</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer center-align">
+                <button type="submit" class="right teal white-text btn-flat waves-effect waves-light" id="category-creation-submission">
+                    <i class="material-icons right">add_circle</i>
+                    Create
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="/materializeLoad.js"></script>
+
+</html>
